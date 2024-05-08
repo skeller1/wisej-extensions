@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using Wisej.Web.Ext.ChatControl.Messages;
 
 namespace Wisej.Web.Ext.ChatControl
 {
@@ -15,15 +14,14 @@ namespace Wisej.Web.Ext.ChatControl
 		/// <summary>
 		/// Creates a new instance of <see cref="Message"/>.
 		/// </summary>
-		public Message()
-		{
-		}
+		public Message() { }
 
 		/// <summary>
 		/// Creates a new instance of <see cref="Message"/> with the given configuration.
 		/// </summary>
-		/// <param name="user"></param>
-		/// <param name="content"></param>
+		/// <param name="user">The user associated with the message.</param>
+		/// <param name="content">The content of the message.</param>
+		/// <param name="contentType">The message content type.</param>
 		public Message(string content, string contentType = null, User user = null)
 		{
 			this.User = user;
@@ -65,14 +63,30 @@ namespace Wisej.Web.Ext.ChatControl
 		/// </summary>
 		public string UserData { get; set; }
 
-		// the control rendered in the chat box.
-		internal Control? Control { get; set; }
+		/// <summary>
+		/// The control rendered in the chat box. 
+		/// Only available after the control has been added to the chatbox.
+		/// </summary>
+		public Control? Control { get; set; }
+
+		/// <summary>
+		/// Gets or sets whether the bubble background is visible.
+		/// </summary>
+		public bool BubbleVisible = true;
 
 		#endregion
 
 		#region Events
 
-		internal event RenderMessageContentEventHandler MessageControlNeeded;
+		/// <summary>
+		/// Fires when the <see cref="Message"/>'s control is requested.
+		/// </summary>
+		internal event RenderMessageControlEventHandler RenderMessageControl;
+
+		/// <summary>
+		/// Fires when the <see cref="Message.Control"/> is assigned.
+		/// </summary>
+		internal event EventHandler MessageControlAssigned;
 
 		#endregion
 
@@ -81,14 +95,28 @@ namespace Wisej.Web.Ext.ChatControl
 		// requests a control to be rendered for the current message.
 		internal Control RequestControl()
 		{
-			var args = new RenderMessageContentEventArgs(this);
+			if (this.Control == null)
+			{
+				// request a control from the user.
+				var args = new RenderMessageControlEventArgs(this);
 
-			MessageControlNeeded?.Invoke(args);
+				RenderMessageControl?.Invoke(args);
 
-			if (args.Control == null)
-				this.Control = new ClientAutoSizeLabel { AllowHtml = true, Text = this.Content, ForeColor = Color.White };
-			else
-				this.Control = args.Control;
+				// if the user didn't provide a control, use the default one.
+				if (args.Control == null)
+					this.Control = new Label
+					{
+						Selectable = true,
+						Text = this.Content,
+						UseMnemonic = false,
+						Cursor = Cursors.Text,
+						ForeColor = Color.FromName("@highlightText")
+					};
+				else
+					this.Control = args.Control;
+			}
+
+			MessageControlAssigned?.Invoke(this, EventArgs.Empty);
 
 			return this.Control;
 		}
@@ -101,13 +129,13 @@ namespace Wisej.Web.Ext.ChatControl
 		{
 			return new Message
 			{
-				Content = this.Content,
-				ContentType = this.ContentType,
-				Control = this.Control,
-				Timestamp = this.Timestamp,
 				Id = this.Id,
 				User = this.User,
-				UserData = this.UserData
+				Content = this.Content,
+				Control = this.Control,
+				UserData = this.UserData,
+				Timestamp = this.Timestamp,
+				ContentType = this.ContentType
 			};
 		}
 

@@ -28,11 +28,11 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			Wisej.Web.ComponentTool componentTool1 = new Wisej.Web.ComponentTool();
-			Wisej.Web.ComponentTool componentTool2 = new Wisej.Web.ComponentTool();
 			this.textBoxMessage = new Wisej.Web.TextBox();
-			this.panelMessages = new Wisej.Web.Panel();
-			this.upload1 = new Wisej.Web.Upload();
+			this.flexLayoutPanelMessages = new Wisej.Web.FlexLayoutPanel();
+			this.panelMessageInput = new Wisej.Web.Panel();
+			this.buttonSend = new Wisej.Web.Button();
+			this.panelMessageInput.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// textBoxMessage
@@ -42,59 +42,66 @@
 			this.textBoxMessage.AutoSize = false;
 			this.textBoxMessage.BackColor = System.Drawing.Color.FromName("@toolbar");
 			this.textBoxMessage.BorderStyle = Wisej.Web.BorderStyle.None;
-			this.textBoxMessage.CssStyle = "border-radius: 18px;";
-			this.textBoxMessage.Dock = Wisej.Web.DockStyle.Bottom;
-			this.textBoxMessage.Location = new System.Drawing.Point(16, 539);
+			this.textBoxMessage.Dock = Wisej.Web.DockStyle.Fill;
+			this.textBoxMessage.Location = new System.Drawing.Point(0, 0);
 			this.textBoxMessage.Name = "textBoxMessage";
 			this.textBoxMessage.Padding = new Wisej.Web.Padding(8, 0, 0, 0);
-			this.textBoxMessage.Size = new System.Drawing.Size(466, 43);
+			this.textBoxMessage.Size = new System.Drawing.Size(416, 50);
 			this.textBoxMessage.TabIndex = 0;
-			this.textBoxMessage.LostFocus += TextBoxMessage_LostFocus;
-			componentTool1.ImageSource = "icon-upload";
-			componentTool1.Name = "File";
-			componentTool1.Position = Wisej.Web.LeftRightAlignment.Left;
-			componentTool2.ImageSource = "icon-right";
-			componentTool2.Name = "Post";
-			this.textBoxMessage.Tools.AddRange(new Wisej.Web.ComponentTool[] {
-            componentTool1,
-            componentTool2});
 			this.textBoxMessage.Watermark = "Type a message...";
-			this.textBoxMessage.ToolClick += new Wisej.Web.ToolClickEventHandler(this.textBoxMessage_ToolClick);
+			this.textBoxMessage.LostFocus += new System.EventHandler(this.textBoxMessage_LostFocus);
 			this.textBoxMessage.KeyUp += new Wisej.Web.KeyEventHandler(this.textBoxMessage_KeyUp);
 			// 
-			// panelMessages
+			// flexLayoutPanelMessages
 			// 
-			this.panelMessages.AutoScroll = true;
-			this.panelMessages.AutoScrollMargin = new System.Drawing.Size(0, 20);
-			this.panelMessages.CssStyle = "border-radius:0px;";
-			this.panelMessages.Dock = Wisej.Web.DockStyle.Fill;
-			this.panelMessages.Location = new System.Drawing.Point(16, 16);
-			this.panelMessages.Name = "panelMessages";
-			this.panelMessages.ScrollBars = Wisej.Web.ScrollBars.Vertical;
-			this.panelMessages.Size = new System.Drawing.Size(466, 523);
-			this.panelMessages.TabIndex = 1;
+			this.flexLayoutPanelMessages.AutoScroll = true;
+			this.flexLayoutPanelMessages.AutoScrollMargin = new System.Drawing.Size(0, 20);
+			this.flexLayoutPanelMessages.CssStyle = "border-radius:0px;";
+			this.flexLayoutPanelMessages.Dock = Wisej.Web.DockStyle.Fill;
+			this.flexLayoutPanelMessages.LayoutStyle = Wisej.Web.FlexLayoutStyle.Vertical;
+			this.flexLayoutPanelMessages.Location = new System.Drawing.Point(16, 16);
+			this.flexLayoutPanelMessages.Name = "flexLayoutPanelMessages";
+			this.flexLayoutPanelMessages.ScrollBars = Wisej.Web.ScrollBars.Vertical;
+			this.flexLayoutPanelMessages.Size = new System.Drawing.Size(466, 516);
+			this.flexLayoutPanelMessages.TabIndex = 1;
 			// 
-			// upload1
+			// panelMessageInput
 			// 
-			this.upload1.Location = new System.Drawing.Point(110, 44);
-			this.upload1.Name = "upload1";
-			this.upload1.Size = new System.Drawing.Size(200, 30);
-			this.upload1.TabIndex = 0;
-			this.upload1.Text = "upload1";
-			this.upload1.Visible = false;
-			this.upload1.Uploaded += new Wisej.Web.UploadedEventHandler(this.upload1_Uploaded);
+			this.panelMessageInput.BackColor = System.Drawing.Color.FromName("@toolbar");
+			this.panelMessageInput.Controls.Add(this.textBoxMessage);
+			this.panelMessageInput.Controls.Add(this.buttonSend);
+			this.panelMessageInput.CssStyle = "border-radius: 18px;";
+			this.panelMessageInput.Dock = Wisej.Web.DockStyle.Bottom;
+			this.panelMessageInput.Location = new System.Drawing.Point(16, 532);
+			this.panelMessageInput.Name = "panelMessageInput";
+			this.panelMessageInput.Size = new System.Drawing.Size(466, 50);
+			this.panelMessageInput.TabIndex = 2;
+			// 
+			// buttonSend
+			// 
+			this.buttonSend.BackColor = System.Drawing.Color.FromName("@toolbar");
+			this.buttonSend.BorderStyle = Wisej.Web.BorderStyle.None;
+			this.buttonSend.CssStyle = "border-radius: 0px;";
+			this.buttonSend.Dock = Wisej.Web.DockStyle.Right;
+			this.buttonSend.Focusable = false;
+			this.buttonSend.ImageSource = "icon-right";
+			this.buttonSend.Location = new System.Drawing.Point(416, 0);
+			this.buttonSend.Name = "buttonSend";
+			this.buttonSend.Size = new System.Drawing.Size(50, 50);
+			this.buttonSend.TabIndex = 1;
+			this.buttonSend.Click += new System.EventHandler(this.buttonSend_Click);
 			// 
 			// ChatBox
 			// 
 			this.BackColor = System.Drawing.Color.FromName("@window");
 			this.BorderStyle = Wisej.Web.BorderStyle.Solid;
-			this.Controls.Add(this.panelMessages);
-			this.Controls.Add(this.textBoxMessage);
-			this.Controls.Add(this.upload1);
+			this.Controls.Add(this.flexLayoutPanelMessages);
+			this.Controls.Add(this.panelMessageInput);
 			this.Name = "ChatBox";
 			this.Padding = new Wisej.Web.Padding(16);
 			this.ScrollBars = Wisej.Web.ScrollBars.Vertical;
 			this.Size = new System.Drawing.Size(500, 600);
+			this.panelMessageInput.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -102,7 +109,8 @@
 		#endregion
 
 		private TextBox textBoxMessage;
-		private Panel panelMessages;
-		private Upload upload1;
+		private FlexLayoutPanel flexLayoutPanelMessages;
+		private Panel panelMessageInput;
+		private Button buttonSend;
 	}
 }

@@ -2,10 +2,129 @@
 
 namespace Wisej.Web.Ext.ChatControl
 {
+	/// <summary>
+	/// Represents a user in the context of a <see cref="ChatBox"/>.
+	/// </summary>
 	public class User
 	{
-		public int Id { get; set; }
+		#region Constructors
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="User"/> class.
+		/// </summary>
+		public User() { }
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="User"/> class with the specified ID, name, and image source.
+		/// </summary>
+		/// <param name="id">The unique identifier of the user.</param>
+		/// <param name="name">The name of the user.</param>
+		/// <param name="imageSource">The image source of the user.</param>
+		public User(string id, string name, string? imageSource = null)
+		{
+			Id = id;
+			Name = name;
+
+			if (imageSource != null)
+				ImageSource = imageSource;
+		}
+
+		#endregion
+
+		/// <summary>
+		/// Gets or sets the unique identifier of the user.
+		/// </summary>
+		public string Id { get; set; }
+
+		/// <summary>
+		/// Gets or sets the name of the user.
+		/// </summary>
 		public string Name { get; set; }
-		public Image Image { get; set; }
+
+		/// <summary>
+		/// Gets or sets the image source of the user.
+		/// </summary>
+		public string ImageSource
+		{
+			get;
+			set;
+
+		} = "resource.wx/Wisej.Web.Ext.ChatControl/Images/person.svg";
+
+		/// <summary>
+		/// Gets or sets the color of the bubble to display for this user.
+		/// </summary>
+		public Color? BubbleColor { get; set; }
+
+		/// <summary>
+		/// Determines whether the specified object is equal to the current object.
+		/// </summary>
+		/// <param name="obj">The object to compare with the current object.</param>
+		/// <returns><c>true</c> if the specified object is equal to the current object; otherwise, <c>false</c>.</returns>
+		public override bool Equals(object obj)
+		{
+			if (obj == null || GetType() != obj.GetType())
+			{
+				return false;
+			}
+
+			return Equals(obj as User);
+		}
+
+		/// <summary>
+		/// Determines whether the specified <see cref="User"/> object is equal to the current object.
+		/// </summary>
+		/// <param name="other">The <see cref="User"/> object to compare with the current object.</param>
+		/// <returns><c>true</c> if the specified <see cref="User"/> object is equal to the current object; otherwise, <c>false</c>.</returns>
+		public bool Equals(User other)
+		{
+			if (other == null)
+			{
+				return false;
+			}
+
+			return Id == other.Id;
+		}
+
+		/// <summary>
+		/// Serves as the default hash function.
+		/// </summary>
+		/// <returns>A hash code for the current object.</returns>
+		public override int GetHashCode()
+		{
+			return Id.GetHashCode();
+		}
+
+		/// <summary>
+		/// Determines whether two specified <see cref="User"/> objects have the same value.
+		/// </summary>
+		/// <param name="lhs">The first <see cref="User"/> to compare, or <see langword="null"/>.</param>
+		/// <param name="rhs">The second <see cref="User"/> to compare, or <see langword="null"/>.</param>
+		/// <returns><c>true</c> if the value of <paramref name="lhs"/> is the same as the value of <paramref name="rhs"/>; otherwise, <c>false</c>.</returns>
+		public static bool operator ==(User lhs, User rhs)
+		{
+			if (ReferenceEquals(lhs, rhs))
+			{
+				return true;
+			}
+
+			if (lhs is null || rhs is null)
+			{
+				return false;
+			}
+
+			return lhs.Equals(rhs);
+		}
+
+		/// <summary>
+		/// Determines whether two specified <see cref="User"/> objects have different values.
+		/// </summary>
+		/// <param name="lhs">The first <see cref="User"/> to compare, or <see langword="null"/>.</param>
+		/// <param name="rhs">The second <see cref="User"/> to compare, or <see langword="null"/>.</param>
+		/// <returns><c>true</c> if the value of <paramref name="lhs"/> is different from the value of <paramref name="rhs"/>; otherwise, <c>false</c>.</returns>
+		public static bool operator !=(User lhs, User rhs)
+		{
+			return !(lhs == rhs);
+		}
 	}
 }

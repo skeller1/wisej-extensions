@@ -1,20 +1,8 @@
-﻿using System;
-
-namespace Wisej.Web.Ext.ChatControl
+﻿namespace Wisej.Web.Ext.ChatControl
 {
-
-	public delegate void FormatMessageEventHandler(FormatMessageEventArgs e);
-
-	public class FormatMessageEventArgs : EventArgs
-	{
-		public FormatMessageEventArgs(Message message)
-		{
-			this.Message = message;
-		}
-		
-		/// <summary>
-		/// Gets or sets the message to format.
-		/// </summary>
-		public Message Message { get; private set; }
-	}
+	/// <summary>
+	/// Represents the method that will handle the event when a message can be formatted.
+	/// </summary>
+	/// <param name="e">An instance of <see cref="MessageEventArgs"/> containing the message event data.</param>
+	public delegate void FormatMessageEventHandler(MessageEventArgs e);
 }

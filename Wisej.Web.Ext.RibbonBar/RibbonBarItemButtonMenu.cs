@@ -58,5 +58,13 @@ namespace Wisej.Web.Ext.RibbonBar
 
 			base.Dispose(disposing);
 		}
+
+		public override void Update()
+		{	
+			base.Update();
+
+			if (this.Button != null)
+				this.Button.Update();
+		}
 	}
 }

@@ -6,6 +6,7 @@
 	  <LangVersion>latest</LangVersion>
 	  <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 	  <GenerateDocumentationFile>True</GenerateDocumentationFile>
+	  <SignAssembly>true</SignAssembly>
 	  <AssemblyOriginatorKeyFile>extension.snk</AssemblyOriginatorKeyFile>
 	  <EmbeddedResourceUseDependentUponConvention>true</EmbeddedResourceUseDependentUponConvention>
   </PropertyGroup>
@@ -18,23 +19,21 @@
 
 	<ItemGroup>
 	  <None Remove="Images\Link.svg" />
+	  <None Remove="Images\loading.gif" />
+	  <None Remove="Images\person-fill.svg" />
+	  <None Remove="Images\person.svg" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <EmbeddedResource Include="Images\loading.gif" />
+	  <EmbeddedResource Include="Images\person-fill.svg" />
+	  <EmbeddedResource Include="Images\person.svg" />
 	  <EmbeddedResource Include="Themes\Chat.mixin.theme" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Wisej-3" Version="3.5.*-*" />
 	</ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)'!='net48' AND '$(TargetFramework)'!='net7.0'">
-<PackageReference Include="System.Drawing.Common" Version="7.0.0" Aliases="sdc" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)'=='net48' OR '$(TargetFramework)'=='net7.0'">
-	<PackageReference Include="System.Drawing.Common" Version="6.0.0" />
-  </ItemGroup>
 
   <ItemGroup>
 	  <Compile Update="FileMessageControl.cs">

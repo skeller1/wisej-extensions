@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
+using Wisej.Base;
 
 namespace Wisej.Web.Ext.ChatControl
 {
@@ -12,6 +13,7 @@ namespace Wisej.Web.Ext.ChatControl
 	/// Provides a control with chat-like functionality.
 	/// </summary>
 	[ToolboxItem(true)]
+	[DefaultEvent("SentMessage")]
 	public partial class ChatBox : UserControl
 	{
 
@@ -32,10 +34,16 @@ namespace Wisej.Web.Ext.ChatControl
 		#region Events
 
 		/// <summary>
-		/// Fires when a message is sent.
+		/// Fires before a user-typed message is sent.
 		/// </summary>
-		[Description("Fires when a message is sent.")]
-		public event SendMessageEventHandler SendMessage;
+		[Description("Fires before a user-typed message is sent.")]
+		public event SendingMessageEventHandler SendingMessage;
+
+		/// <summary>
+		/// Fires after a user-typed message has been sent.
+		/// </summary>
+		[Description("Fires after a user-typed message has been sent.")]
+		public event MessageEventHandler SentMessage;
 
 		/// <summary>
 		/// Fires when the user starts typing.
@@ -69,7 +77,7 @@ namespace Wisej.Web.Ext.ChatControl
 		/// Fires when a <see cref="Message"/> control is needed.
 		/// </summary>
 		[Description("Fires when a Message control is needed.")]
-		public event RenderMessageContentEventHandler RenderMessageContent;
+		public event RenderMessageControlEventHandler RenderMessageControl;
 
 		/// <summary>
 		/// Fires when a message is posted to the <see cref="ChatBox"/>.
@@ -82,11 +90,36 @@ namespace Wisej.Web.Ext.ChatControl
 
 		#endregion
 
+		#region Overridden Properties
+
+		/// <summary>
+		/// Returns or sets the type of scroll bars to display for the <see cref="ScrollableControl" />.
+		/// </summary>
+		[ResponsiveProperty]
+		[DefaultValue(ScrollBars.Both)]
+		[SRCategory("CatAppearance")]
+		[SRDescription("ScrollableControlScrollBarsDescr")]
+		public new ScrollBars ScrollBars
+		{
+			get
+			{
+				return this.flexLayoutPanelMessages.ScrollBars;
+			}
+			set
+			{
+				this.flexLayoutPanelMessages.ScrollBars = value;
+			}
+		}
+
+		#endregion
+
 		#region Properties
 
 		/// <summary>
 		/// Gets the data source for the chat box.
 		/// </summary>
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public ObservableCollection<Message> DataSource
 		{
 			get
@@ -96,7 +129,7 @@ namespace Wisej.Web.Ext.ChatControl
 					this._dataSource = new ObservableCollection<Message>();
 					this._dataSource.CollectionChanged += DataSource_CollectionChanged;
 				}
-	
+
 				return this._dataSource;
 			}
 		}
@@ -105,6 +138,7 @@ namespace Wisej.Web.Ext.ChatControl
 		/// <summary>
 		/// Gets or sets the current timestamp format.
 		/// </summary>
+		[DefaultValue("HH:mmm")]
 		[Description("Gets or sets the current timestamp format.")]
 		public string TimestampFormat
 		{
@@ -114,7 +148,7 @@ namespace Wisej.Web.Ext.ChatControl
 			}
 			set
 			{
-				if (this._TimestampFormat  != value) 
+				if (this._TimestampFormat != value)
 				{
 					this._TimestampFormat = value;
 
@@ -126,12 +160,12 @@ namespace Wisej.Web.Ext.ChatControl
 
 		private void UpdateTimestampFormat(string value)
 		{
-			foreach (var message in this.DataSource)
-			{
-				var infoPanel = message.Control?.Parent?.Parent;
-				if (infoPanel is MessageInfoControl control)
-					control.UpdateTimestamp();
-			}
+			//foreach (var message in this.DataSource)
+			//{
+			//	var infoPanel = message.Control?.Parent;
+			//	if (infoPanel is MessageInfoControl control)
+			//		control.UpdateTimestamp();
+			//}
 		}
 
 		/// <summary>
@@ -146,7 +180,7 @@ namespace Wisej.Web.Ext.ChatControl
 			}
 			set
 			{
-				if (this.textBoxMessage.BackColor != value) 
+				if (this.textBoxMessage.BackColor != value)
 				{
 					this.textBoxMessage.BackColor = value;
 				}
@@ -171,9 +205,12 @@ namespace Wisej.Web.Ext.ChatControl
 		/// <summary>
 		/// Gets or sets the current user.
 		/// </summary>
+		[DefaultValue(null)]
 		[Description("Gets or sets the current user.")]
-		public User User 
-		{ 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public User User
+		{
 			get
 			{
 				return this._user;
@@ -188,11 +225,12 @@ namespace Wisej.Web.Ext.ChatControl
 				}
 			}
 		}
-		private User _user = new User("1", "User", "resource.wx/Wisej.Web.Ext.ChatControl/Images/Wisej.png");
+		private User _user = new User("1", "User", "resource.wx/Wisej.Web.Ext.ChatControl/Images/person-fill.svg");
 
 		/// <summary>
 		/// Gets or sets whether the message avatar is visible.
 		/// </summary>
+		[DefaultValue(true)]
 		public bool AvatarVisible
 		{
 			get
@@ -214,6 +252,7 @@ namespace Wisej.Web.Ext.ChatControl
 		/// <summary>
 		/// Gets or sets whether to display the timestamp.
 		/// </summary>
+		[DefaultValue(true)]
 		public bool TimestampVisible
 		{
 			get
@@ -235,6 +274,7 @@ namespace Wisej.Web.Ext.ChatControl
 		/// <summary>
 		/// Gets or sets whether to show the input text box.
 		/// </summary>
+		[DefaultValue(true)]
 		public bool InputVisible
 		{
 			get
@@ -250,6 +290,7 @@ namespace Wisej.Web.Ext.ChatControl
 		/// <summary>
 		/// Gets or sets the text to show when the Chat's TextBox is empty.
 		/// </summary>
+		[DefaultValue(null)]
 		public string Watermark
 		{
 			get
@@ -265,6 +306,7 @@ namespace Wisej.Web.Ext.ChatControl
 		/// <summary>
 		/// Returns or sets whether the chat control is in read-only mode.
 		/// </summary>
+		[DefaultValue(false)]
 		public bool ReadOnly
 		{
 			get
@@ -337,8 +379,8 @@ namespace Wisej.Web.Ext.ChatControl
 		/// <returns></returns>
 		private void RemoveInternal(Message message)
 		{
-			var containers = this.panelMessages.Controls;
-			var container = containers.FirstOrDefault(c => ((MessageContainer)c).Message.Id == message.Id);
+			var containers = this.flexLayoutPanelMessages.Controls;
+			var container = containers.FirstOrDefault(c => ((FlexLayoutPanelMessageContainer)c).Message.Id == message.Id);
 
 			container?.Dispose();
 		}
@@ -380,54 +422,47 @@ namespace Wisej.Web.Ext.ChatControl
 			if (timestamp == null)
 				message.Timestamp = DateTime.Now;
 
-			// pre-format user messages.
-			if (message.User.Id == this.User.Id)
-			{
-				var args = new FormatMessageEventArgs(message);
-				this.FormatMessage?.Invoke(args);
-			}
+			var isChatBoxUser = this.User == message.User;
 
-			message.MessageControlNeeded += Message_MessageControlNeeded;
+			// pre-format messages.
+			this.FormatMessage?.Invoke(new MessageEventArgs(isChatBoxUser, message));
 
-			// fire SendMessage for user messages.
-			if (message.User.Id == this.User.Id && timestamp == null)
+			message.RenderMessageControl += Message_RenderMessageControl;
+
+			// allow the container to cancel sending the message..
+			if (timestamp == null)
 			{
-				var args = new SendMessageEventArgs(message);
-				
-				SendMessage?.Invoke(args);
+				var args = new SendingMessageEventArgs(isChatBoxUser, message);
+				SendingMessage?.Invoke(this, args);
 
 				if (args.Cancel)
 					return;
 			}
 
-			var container = new MessageContainer(message, this);
-
+			var container = new FlexLayoutPanelMessageContainer(message, this);
 			var alignment = GetAlignment(message.User);
-
 			AddToContainer(container, alignment);
+
+			// the message has been sent.
+			SentMessage?.Invoke(this, new MessageEventArgs(isChatBoxUser, message));
 		}
 
-		private void Message_MessageControlNeeded(RenderMessageContentEventArgs e)
+		private HorizontalAlignment GetAlignment(User user)
 		{
-			this.RenderMessageContent?.Invoke(e);
+			return user.Id == this.User.Id ? HorizontalAlignment.Right : HorizontalAlignment.Left;
 		}
 
-		// determines whether the given user should be on the left or right.
-		private Alignment GetAlignment(User user)
+		private void Message_RenderMessageControl(RenderMessageControlEventArgs e)
 		{
-			return user.Id == this.User.Id ? Alignment.Right : Alignment.Left;
+			this.RenderMessageControl?.Invoke(e);
 		}
 
 		// adds the container to the list.
-		private void AddToContainer(MessageContainer container, Alignment alignment)
+		private void AddToContainer(FlexLayoutPanelMessageContainer container, HorizontalAlignment alignment)
 		{
-			container.Dock = DockStyle.Top;
-
-			this.panelMessages.Controls.Add(container);
-
-			container.BringToFront();
-
-			container.Alignment = alignment;
+			container.HorizontalAlign = alignment;
+			this.flexLayoutPanelMessages.Controls.Add(container);
+			Application.Post(() => this.flexLayoutPanelMessages.ScrollControlIntoView(container));
 		}
 
 		#endregion
@@ -465,31 +500,31 @@ namespace Wisej.Web.Ext.ChatControl
 			foreach (Message message in newItems)
 				AddInternal(message);
 
-			if (this.panelMessages.Controls.Count > 0)
-				this.panelMessages.ScrollControlIntoView(this.panelMessages.Controls.First());
+			if (this.flexLayoutPanelMessages.Controls.Count > 0)
+				this.flexLayoutPanelMessages.ScrollControlIntoView(this.flexLayoutPanelMessages.Controls.First());
 		}
 
-		private void ProcessRemove(IList removedItems) 
+		private void ProcessRemove(IList removedItems)
 		{
 			foreach (Message item in removedItems)
 				RemoveInternal(item);
 		}
 
-		private void ProcessReset() 
+		private void ProcessReset()
 		{
-			this.panelMessages.Controls.Clear();
+			this.flexLayoutPanelMessages.Controls.Clear();
 		}
 
-		private void ProcessReplace(IList oldItems, IList newItems) 
-		{ 
-		
+		private void ProcessReplace(IList oldItems, IList newItems)
+		{
+
 		}
 
-		private void ProcessMove(int oldStartingIndex, int newStartingIndex) 
+		private void ProcessMove(int oldStartingIndex, int newStartingIndex)
 		{
-			var controls = this.panelMessages.Controls;
+			var controls = this.flexLayoutPanelMessages.Controls;
 			var control = controls[oldStartingIndex];
-			
+
 			controls.SetChildIndex(control, newStartingIndex);
 		}
 
