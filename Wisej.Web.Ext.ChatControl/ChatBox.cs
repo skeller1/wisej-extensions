@@ -10,7 +10,7 @@ using Wisej.Base;
 namespace Wisej.Web.Ext.ChatControl
 {
 	/// <summary>
-	/// Provides a control with chat-like functionality.
+	/// Provides a control with chat functionality.
 	/// </summary>
 	[ToolboxItem(true)]
 	[DefaultEvent("SentMessage")]

@@ -30,7 +30,7 @@ namespace Wisej.Web.Ext.ChatControl
 			this.Content = content;
 			this.Control.Text = content;
 			this.Control.BackgroundImageSource = "";
-			this.Control.MinimumSize = new System.Drawing.Size(0, 0);
+			this.Control.MinimumSize = new Size(0, 0);
 		}
 	}
 }

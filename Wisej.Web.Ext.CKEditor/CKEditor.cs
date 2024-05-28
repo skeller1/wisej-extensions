@@ -122,7 +122,7 @@ namespace Wisej.Web.Ext.CKEditor
         [Description("Returns or sets whether the control is enabled.")]
         public new bool Enabled
         {
-            get { return this.ReadOnly; }
+            get { return !this.ReadOnly; }
             set
             {
                 if (this.ReadOnly != !value)

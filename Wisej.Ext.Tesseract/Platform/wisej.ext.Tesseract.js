@@ -138,7 +138,7 @@ qx.Class.define("wisej.ext.Tesseract", {
 			this.timer.setInterval(value);
 		},
 
-		_applyWorkerCount: function (value) {
+		_applyWorkerCount: async function (value) {
 
 			if (typeof Tesseract == "undefined") {
 				qx.event.Timer.once(this._applyWorkerCount, this, 100);
@@ -148,34 +148,31 @@ qx.Class.define("wisej.ext.Tesseract", {
 			if (!this.workers)
 				this.workers = [];
 
-			(async () => {
-
-				var count = this.getWorkerCount() - this.workers.length;
-				if (count > 0) {
-					for (var i = 0; i < count; i++) {
-						var me = this;
-						var worker = await Tesseract.createWorker({
-							errorHandler: function (e) {
-								me.fireDataEvent("workerError", e);
-							}
-						});
-						await worker.loadLanguage(this.getLanguage());
-						await worker.initialize(this.getLanguage());
-						await worker.setParameters({
-							tessedit_char_whitelist: this.getWhitelist(),
-						});
-
-						this.workers.push(worker);
-					}
-				} else {
-					var removedWorkers = this.workers.slice(0, count * -1);
-					this.workers = this.workers.slice(count * -1);
-
-					removedWorkers.forEach(function (worker) {
-						worker.terminate();
+			var count = this.getWorkerCount() - this.workers.length;
+			if (count > 0) {
+				for (var i = 0; i < count; i++) {
+					var me = this;
+					var worker = await Tesseract.createWorker({
+						errorHandler: function (e) {
+							me.fireDataEvent("workerError", e);
+						}
 					});
+					await worker.loadLanguage(this.getLanguage());
+					await worker.initialize(this.getLanguage());
+					await worker.setParameters({
+						tessedit_char_whitelist: this.getWhitelist(),
+					});
+
+					this.workers.push(worker);
 				}
-			})();
+			} else {
+				var removedWorkers = this.workers.slice(0, count * -1);
+				this.workers = this.workers.slice(count * -1);
+
+				removedWorkers.forEach(function (worker) {
+					worker.terminate();
+				});
+			}
 		},
 
 		/**
@@ -223,7 +220,7 @@ qx.Class.define("wisej.ext.Tesseract", {
 		 * Scans the last image from the attached camera.
 		 * Fires success / error.
 		 **/
-		processLastCameraImage: function () {
+		processLastCameraImage: async function () {
 
 			if (typeof Tesseract == "undefined") {
 				qx.event.Timer.once(this.processLastCameraImage, this, 100);
@@ -235,6 +232,7 @@ qx.Class.define("wisej.ext.Tesseract", {
 
 			var stream = video.srcObject;
 			if (stream) {
+
 				if (!this.canvas) {
 					this._insertOverlayCanvas(video);
 					this.canvas = document.createElement("canvas");
@@ -248,38 +246,36 @@ qx.Class.define("wisej.ext.Tesseract", {
 
 				this.canvas.getContext('2d').drawImage(video, 0, 0, width, height);
 
-				(async () => {
-					// only continue if there are active workers.
-					if (!this.workers || this.workers.length == 0)
-						return;
+				// only continue if there are active workers.
+				if (!this.workers || this.workers.length == 0)
+					return;
 
-					// clear the canvas.
-					this.overlayCanvas.getContext("2d").clearRect(0, 0, this.overlayCanvas.width, this.overlayCanvas.height);
+				// clear the canvas.
+				this.overlayCanvas.getContext("2d").clearRect(0, 0, this.overlayCanvas.width, this.overlayCanvas.height);
 
-					// get the image text.
-					var result = await this.getImageTextData(this.canvas.toDataURL());
+				// get the image text.
+				var result = await this.getImageTextData(this.canvas.toDataURL());
 
-					// stop if the result is not confident.
-					if (result.confidence <= this.getMinimumConfidence())
-						return;
+				// stop if the result is not confident.
+				if (result.confidence <= this.getMinimumConfidence())
+					return;
 
-					// get a list of keywords.
-					var keywords = this.getKeywords();
+				// get a list of keywords.
+				var keywords = this.getKeywords();
 
-					if (this.getShowWords())
-						this._drawRectangles(result.words);
+				if (this.getShowWords())
+					this._drawRectangles(result.words);
 
-					var me = this;
-					if (keywords && keywords.length > 0) {
-						keywords.forEach(function (keyword) {
-							if (result.text.includes(keyword))
-								me.fireDataEvent("textRecognized", result);
-						});
-					}
-					else {
-						me.fireDataEvent("textRecognized", result);
-					}
-				})();
+				var me = this;
+				if (keywords && keywords.length > 0) {
+					keywords.forEach(function (keyword) {
+						if (result.text.includes(keyword))
+							me.fireDataEvent("textRecognized", result);
+					});
+				}
+				else {
+					me.fireDataEvent("textRecognized", result);
+				}
 
 			} else {
 				this.fireDataEvent("scanError", "Couldn't capture an image from the camera.");
@@ -305,12 +301,9 @@ qx.Class.define("wisej.ext.Tesseract", {
 			return result;
 		},
 
-		scanImage: function (image) {
-			var me = this;
-			return (async function () {
-				var promise = me.getImageTextData(image);
-				return promise;
-			})();
+		scanImage: async function (image) {
+
+			return this.getImageTextData(image);
 		},
 
 		_insertOverlayCanvas: function (video) {
