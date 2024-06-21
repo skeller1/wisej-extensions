@@ -86,7 +86,7 @@ namespace Wisej.Web.Ext.ChatControl
 		/// <summary>
 		/// Fires when the <see cref="Message.Control"/> is assigned.
 		/// </summary>
-		internal event EventHandler MessageControlAssigned;
+		public event EventHandler MessageControlAssigned;
 
 		#endregion
 

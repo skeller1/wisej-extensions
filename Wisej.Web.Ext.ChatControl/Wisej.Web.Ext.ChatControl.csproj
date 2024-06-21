@@ -19,13 +19,13 @@
 
 	<ItemGroup>
 	  <None Remove="Images\Link.svg" />
-	  <None Remove="Images\loading.gif" />
+	  <None Remove="Images\loading.svg" />
 	  <None Remove="Images\person-fill.svg" />
 	  <None Remove="Images\person.svg" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <EmbeddedResource Include="Images\loading.gif" />
+	  <EmbeddedResource Include="Images\loading.svg" />
 	  <EmbeddedResource Include="Images\person-fill.svg" />
 	  <EmbeddedResource Include="Images\person.svg" />
 	  <EmbeddedResource Include="Themes\Chat.mixin.theme" />

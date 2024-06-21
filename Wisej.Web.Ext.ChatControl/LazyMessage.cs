@@ -18,7 +18,7 @@ namespace Wisej.Web.Ext.ChatControl
 		{
 			this.Control.MinimumSize = new Size(60, 16);
 			this.Control.BackgroundImageLayout = ImageLayout.Zoom;
-			this.Control.BackgroundImageSource = "resource.wx/Wisej.Web.Ext.ChatControl/Images/loading.gif";
+			this.Control.BackgroundImageSource = "resource.wx/Wisej.Web.Ext.ChatControl/Images/loading.svg";
 		}
 
 		/// <summary>
