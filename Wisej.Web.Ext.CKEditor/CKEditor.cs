@@ -2,7 +2,7 @@
 //
 // (C) 2015 ICE TEA GROUP LLC - ALL RIGHTS RESERVED
 //
-// 
+//
 //
 // ALL INFORMATION CONTAINED HEREIN IS, AND REMAINS
 // THE PROPERTY OF ICE TEA GROUP LLC AND ITS SUPPLIERS, IF ANY.
@@ -31,9 +31,9 @@ using WinForms = System.Windows.Forms;
 namespace Wisej.Web.Ext.CKEditor
 {
 	/// <summary>
-	/// CKEditor (formerly FCKeditor) is an open source WYSIWYG text editor designed to bring common word processor 
+	/// CKEditor (formerly FCKeditor) is an open source WYSIWYG text editor designed to bring common word processor
 	/// features directly to web pages, simplifying their content creation.
-	/// 
+	///
 	/// from: http://ckeditor.com/
 	/// </summary>
 	[ToolboxItem(true)]
@@ -84,7 +84,7 @@ namespace Wisej.Web.Ext.CKEditor
 			((LinkClickedEventHandler)base.Events[nameof(LinkClicked)])?.Invoke(this, e);
 		}
 
-		#endregion
+		#endregion Events
 
 		#region Properties
 
@@ -113,42 +113,44 @@ namespace Wisej.Web.Ext.CKEditor
 				}
 			}
 		}
+
 		private string _text = "";
 
-        /// <summary>
-        /// Returns or sets whether the control is enabled.
-        /// </summary>
-        [DefaultValue(true)]
-        [Description("Returns or sets whether the control is enabled.")]
-        public new bool Enabled
-        {
-            get { return !this.ReadOnly; }
-            set
-            {
-                if (this.ReadOnly != !value)
-                    this.ReadOnly = !value;
-            }
-        }
+		/// <summary>
+		/// Returns or sets whether the control is enabled.
+		/// </summary>
+		[DefaultValue(true)]
+		[Description("Returns or sets whether the control is enabled.")]
+		public new bool Enabled
+		{
+			get { return !this.ReadOnly; }
+			set
+			{
+				if (this.ReadOnly != !value)
+					this.ReadOnly = !value;
+			}
+		}
 
-        /// <summary>
-        /// Returns or sets whether the user can interact with the editor.
-        /// </summary>
-        [DesignerActionList]
-        [DefaultValue(false)]
-        [Description("Returns or sets whether the user can interact with the editor.")]
-        public bool ReadOnly
-        {
-            get { return this._readOnly; }
+		/// <summary>
+		/// Returns or sets whether the user can interact with the editor.
+		/// </summary>
+		[DesignerActionList]
+		[DefaultValue(false)]
+		[Description("Returns or sets whether the user can interact with the editor.")]
+		public bool ReadOnly
+		{
+			get { return this._readOnly; }
 
-            set
-            {
-                if (this._readOnly != value)
-                {
-                    this._readOnly = value;
-                    Call("setReadOnly", value);
-                }
-            }
-        }
+			set
+			{
+				if (this._readOnly != value)
+				{
+					this._readOnly = value;
+					Call("setReadOnly", value);
+				}
+			}
+		}
+
 		private bool _readOnly = false;
 
 		/// <summary>
@@ -170,6 +172,7 @@ namespace Wisej.Web.Ext.CKEditor
 				}
 			}
 		}
+
 		private bool _showToolbar = true;
 
 		/// <summary>
@@ -191,6 +194,7 @@ namespace Wisej.Web.Ext.CKEditor
 				}
 			}
 		}
+
 		private bool _showFooter = true;
 
 		/// <summary>
@@ -200,9 +204,9 @@ namespace Wisej.Web.Ext.CKEditor
 		/// </summary>
 		[DesignerActionList]
 		[MergableProperty(false)]
-		[Editor("Wisej.Design.CodeEditor, Wisej.Framework.Design, Version=3.0.0.0, Culture=neutral, PublicKeyToken=17bef35e11b84171", 
+		[Editor("Wisej.Design.CodeEditor, Wisej.Framework.Design, Version=3.0.0.0, Culture=neutral, PublicKeyToken=17bef35e11b84171",
 				"System.Drawing.Design.UITypeEditor, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-		public new virtual dynamic Options
+		public virtual new dynamic Options
 		{
 			get
 			{
@@ -214,6 +218,7 @@ namespace Wisej.Web.Ext.CKEditor
 				Update();
 			}
 		}
+
 		private dynamic _options = new DynamicObject();
 
 		/// <summary>
@@ -222,7 +227,7 @@ namespace Wisej.Web.Ext.CKEditor
 		[DesignerActionList]
 		[TypeConverter(typeof(ArrayConverter))]
 		[Description("Returns or sets the font names to display in the toolbar.")]
-		[Editor("System.Windows.Forms.Design.StringArrayEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", 
+		[Editor("System.Windows.Forms.Design.StringArrayEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
 				"System.Drawing.Design.UITypeEditor, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 		public string[] FontNames
 		{
@@ -236,6 +241,7 @@ namespace Wisej.Web.Ext.CKEditor
 				}
 			}
 		}
+
 		private string[] _fontNames = DefaultFontNames;
 
 		private bool ShouldSerializeFontNames()
@@ -259,7 +265,29 @@ namespace Wisej.Web.Ext.CKEditor
 				return _defaultFontNames;
 			}
 		}
+
 		private static string[] _defaultFontNames = new[] { "Verdana", "Arial", "Georgia", "Trebuchet MS" };
+
+		/// <summary>
+		/// Returns or sets the version check alert.
+		/// </summary>
+		[DefaultValue(false)]
+		public bool VersionCheck
+		{
+			get
+			{
+				return this._versionCheck;
+			}
+			set
+			{
+				if (this._versionCheck != value)
+					this._versionCheck = value;
+
+				Update();
+			}
+		}
+
+		private bool _versionCheck;
 
 		/// <summary>
 		/// Collection of external (local) plugins to register with the CKEditor control.
@@ -281,20 +309,21 @@ namespace Wisej.Web.Ext.CKEditor
 				}
 			}
 		}
+
 		private ExternalPlugin[] _externalPlugins;
 
-		#endregion
+		#endregion Properties
 
 		#region Methods
 
 		/// <summary>
-		/// Executes commands to manipulate the contents of the editable region. 
+		/// Executes commands to manipulate the contents of the editable region.
 		/// </summary>
 		/// <param name="command">The name of the command to execute. See <see href="https://developer.mozilla.org/en-US/docs/Web/API/Document/execCommand"/> for a list of commands.</param>
 		/// <param name="argument">For commands which require an input argument (such as insertImage, for which this is the URL of the image to insert), this is a string providing that information. Specify null if no argument is needed.</param>
 		/// <remarks>
-		/// Most commands affect the document's selection (bold, italics, etc.), while others insert new elements (adding a link) or 
-		/// affect an entire line (indenting). When using contentEditable, calling execCommand() will affect the 
+		/// Most commands affect the document's selection (bold, italics, etc.), while others insert new elements (adding a link) or
+		/// affect an entire line (indenting). When using contentEditable, calling execCommand() will affect the
 		/// currently active editable element.
 		/// </remarks>
 		public void ExecCommand(string command, string argument = null)
@@ -360,7 +389,7 @@ namespace Wisej.Web.Ext.CKEditor
 			base.Update();
 		}
 
-		#endregion
+		#endregion Methods
 
 		#region Wisej Implementation
 
@@ -396,7 +425,8 @@ namespace Wisej.Web.Ext.CKEditor
 			get { return _baseUrl; }
 			set { _baseUrl = value; }
 		}
-		private static string _baseUrl = "https://cdn.ckeditor.com/4.12.1/full-all/";
+
+		private static string _baseUrl = "https://cdn.ckeditor.com/4.21.0/full-all/";
 
 		/// <summary>
 		/// Overridden to return our list of script resources.
@@ -430,11 +460,13 @@ namespace Wisej.Web.Ext.CKEditor
 			string script = GetResourceString("Wisej.Web.Ext.CKEditor.JavaScript.startup.js");
 
 			options.config = this.Options;
+			options.config.versionCheck = this.VersionCheck;
 			options.fonts = this.FontNames;
 			options.basePath = CKEditor.BaseUrl;
 			options.showFooter = this.ShowFooter;
 			options.showToolbar = this.ShowToolbar;
 			options.externalPlugins = this.ExternalPlugins;
+
 			script = script.Replace("$options", options.ToString());
 
 			return script;
@@ -471,7 +503,7 @@ namespace Wisej.Web.Ext.CKEditor
 				case "load":
 					ProcessLoadEvent();
 					break;
-					
+
 				case "changeText":
 					this._text = e.Data ?? "";
 					break;
@@ -487,7 +519,6 @@ namespace Wisej.Web.Ext.CKEditor
 				case "linkClick":
 					ProcessLinkClickedWebEvent(e);
 					break;
-
 			}
 			base.OnWidgetEvent(e);
 		}
@@ -527,6 +558,6 @@ namespace Wisej.Web.Ext.CKEditor
 			OnLinkClicked(new LinkClickedEventArgs(e.Data));
 		}
 
-		#endregion
+		#endregion Wisej Implementation
 	}
 }
