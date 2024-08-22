@@ -94,7 +94,7 @@ namespace Wisej.Web.Ext.SideButton
 		{
 			get
 			{
-				var state = this.Collapsed ? "collapsed" : null;
+				var state = this.Collapsed ? "collapsed" : "default";
 				return Application.Theme.GetProperty<int>(
 					((IWisejControl)this).AppearanceKey, "height", state);
 			}
