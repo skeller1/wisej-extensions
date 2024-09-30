@@ -203,7 +203,7 @@ this.__processScales = function (options) {
 }
 
 /**
- * Moves the plugins to options.plugins.
+ * Fixes plugin names and adds system methods.
  * @param {any} options
  */
 this.__processPlugins = function (config) {
@@ -214,6 +214,25 @@ this.__processPlugins = function (config) {
 		plugins.datalabels = plugins.dataLabels;
 		delete plugins.dataLabels;
 	}
+
+	var datalabels = plugins.datalabels;
+	if (!datalabels.formatter) {
+		datalabels.formatter = this.__formatDataLabels;
+	}
+}
+
+/**
+ * Uses the formatted labels instead of the data labels.
+ */
+this.__formatDataLabels = function (value, context) {
+
+	var dataset = context.dataset;
+	var dataindex = context.dataIndex;
+	if (dataset.formatted && dataset.formatted.length) {
+		return dataset.formatted[dataindex];
+	}
+
+	return Math.round(value);
 }
 
 /**

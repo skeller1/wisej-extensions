@@ -104,6 +104,7 @@ namespace Wisej.Web.Ext.ChatControl
 
 				// if the user didn't provide a control, use the default one.
 				if (args.Control == null)
+				{
 					this.Control = new Label
 					{
 						Selectable = true,
@@ -112,8 +113,11 @@ namespace Wisej.Web.Ext.ChatControl
 						Cursor = Cursors.Text,
 						ForeColor = Color.FromName("@highlightText")
 					};
+				}
 				else
+				{
 					this.Control = args.Control;
+				}
 			}
 
 			MessageControlAssigned?.Invoke(this, EventArgs.Empty);

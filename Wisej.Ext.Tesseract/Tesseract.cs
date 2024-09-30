@@ -41,9 +41,8 @@ namespace Wisej.Ext.Tesseract
 	/// </remarks>
 	[ToolboxItem(true)]
 	[ApiCategory("Tesseract")]
-	public class Tesseract : Component, IExtenderProvider
+	public class Tesseract : Component
 	{
-
 		#region Constructors
 
 		/// <summary>
@@ -400,20 +399,6 @@ namespace Wisej.Ext.Tesseract
 
 		#endregion
 
-		#region IExtenderProvider Implementation
-
-		/// <summary>
-		/// Returns whether the given object can be extended.
-		/// </summary>
-		/// <param name="extendee"></param>
-		/// <returns>bool</returns>
-		bool IExtenderProvider.CanExtend(object extendee)
-		{
-			return extendee is Control;
-		}
-
-		#endregion
-
 		#region ControlConverter
 
 		internal class CameraConverter : ReferenceConverter
@@ -538,6 +523,5 @@ namespace Wisej.Ext.Tesseract
 		}
 
 		#endregion
-
 	}
 }
