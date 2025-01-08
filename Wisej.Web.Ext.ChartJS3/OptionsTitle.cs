@@ -172,7 +172,7 @@ namespace Wisej.Web.Ext.ChartJS3
 		/// </summary>
 		[DefaultValue(typeof(Color), "")]
 		[Description("Title color.")]
-		public Color FontColor
+		public Color Color
 		{
 			get
 			{

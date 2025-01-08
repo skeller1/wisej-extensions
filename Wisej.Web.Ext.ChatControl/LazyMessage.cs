@@ -3,13 +3,25 @@ using System.Drawing;
 
 namespace Wisej.Web.Ext.ChatControl
 {
+	/// <summary>
+	/// A <see cref="Message"/> with a deferred result.
+	/// </summary>
 	public class LazyMessage : Message
 	{
 		/// <summary>
 		/// Creates a new instance of <see cref="LazyMessage"/> with the given user.
 		/// </summary>
 		/// <param name="user">The user.</param>
-		public LazyMessage(User user = null) : base("", null, user) 
+		public LazyMessage(User user = null) : this(user, null)
+		{
+		}
+
+		/// <summary>
+		/// Creates a new instance of <see cref="LazyMessage"/> with the given user and content type.
+		/// </summary>
+		/// <param name="user">The message's user.</param>
+		/// <param name="contentType">The content type of the message.</param>
+		public LazyMessage(User user, string contentType) : base("", contentType, user)
 		{
 			MessageControlAssigned += LazyMessage_MessageControlAssigned;
 		}

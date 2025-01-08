@@ -171,22 +171,57 @@ qx.Class.define("wisej.web.ext.Camera", {
 		 * Returns the current snapshot from the camera in base64.
 		 */
 		getImage: function () {
-
 			var mediaObject = this._media.getMediaObject();
+			var me = this;
+
+			return new Promise(function (resolve, reject) {
+				var timeoutReached = false;
+
+				// Set a timeout to reject after 3 seconds.
+				var timeout = setTimeout(function () {
+					timeoutReached = true;
+					if (mediaObject.readyState >= 2) {
+						resolve(me.__captureSnapshot(mediaObject));
+					} else {
+						reject(new Error("Media not ready within 3 seconds."));
+					}
+				}, 3000);
+
+				// Check readyState in an interval.
+				var checkReadyState = function () {
+					if (mediaObject.readyState >= 2) {
+						clearTimeout(timeout);
+						resolve(me.__captureSnapshot(mediaObject));
+					} else if (!timeoutReached) {
+						requestAnimationFrame(checkReadyState);
+					}
+				};
+
+				// Start checking.
+				checkReadyState();
+			}).catch(function (error) {
+				console.error(error);
+				return null;
+			});
+		},
+
+		/**
+		 * Captures the snapshot and returns the base64 string.
+		 */
+		__captureSnapshot: function (mediaObject) {
 			var height = mediaObject.videoHeight;
 			var width = mediaObject.videoWidth;
-			
+
 			var ctx = this.__getCanvasContext(height, width);
 			if (ctx) {
-
 				ctx.filter = this.getVideoFilter();
 				ctx.drawImage(mediaObject, 0, 0, width, height);
-
 				return this.canvas.toDataURL();
 			}
 
 			return null;
 		},
+
 
 		/**
 		 * Starts recording the MediaStream with the specified configuration.

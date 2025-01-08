@@ -403,9 +403,7 @@ namespace Wisej.Web.Ext.Camera
 			var tcs = new TaskCompletionSource<Image>();
 			GetImage((image) =>
 			{
-
 				tcs.SetResult(image);
-
 			});
 			return tcs.Task;
 		}

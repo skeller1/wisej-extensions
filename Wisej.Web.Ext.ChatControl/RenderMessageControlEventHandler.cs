@@ -14,18 +14,15 @@ namespace Wisej.Web.Ext.ChatControl
 	public class RenderMessageControlEventArgs : EventArgs
 	{
 		/// <summary>
-		/// Creates a new intance of <see cref="RenderMessageControlEventArgs"/> with the given Message.
+		/// Creates a new instance of <see cref="RenderMessageControlEventArgs"/> with the given Message.
 		/// </summary>
 		/// <param name="message"></param>
-		public RenderMessageControlEventArgs(Message message)
-		{
-			this.Message = message;
-		}
+		public RenderMessageControlEventArgs(Message message) => Message = message;
 
 		/// <summary>
 		/// Gets the Message that is requesting a control.
 		/// </summary>
-		public Message Message { get; private set; }
+		public Message Message { get; }
 
 		/// <summary>
 		/// Gets or sets the <see cref="Web.Control"/> to use with the message.

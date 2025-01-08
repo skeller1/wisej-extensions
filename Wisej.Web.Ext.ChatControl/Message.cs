@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using Wisej.Core;
 
 namespace Wisej.Web.Ext.ChatControl
 {
@@ -41,7 +42,7 @@ namespace Wisej.Web.Ext.ChatControl
 		/// <summary>
 		/// Gets or sets the user associated with the message.
 		/// </summary>
-		public User User { get; set; }
+		public User? User { get; set; }
 
 		/// <summary>
 		/// Gets or sets the timestamp of the message.
@@ -105,7 +106,7 @@ namespace Wisej.Web.Ext.ChatControl
 				// if the user didn't provide a control, use the default one.
 				if (args.Control == null)
 				{
-					this.Control = new Label
+					this.Control = new AutoSizeLabel
 					{
 						Selectable = true,
 						Text = this.Content,
@@ -113,10 +114,6 @@ namespace Wisej.Web.Ext.ChatControl
 						Cursor = Cursors.Text,
 						ForeColor = Color.FromName("@highlightText")
 					};
-				}
-				else
-				{
-					this.Control = args.Control;
 				}
 			}
 
@@ -126,21 +123,27 @@ namespace Wisej.Web.Ext.ChatControl
 		}
 
 		/// <summary>
-		/// Clones the given message.
+		/// Clones the current message.
 		/// </summary>
 		/// <returns>The cloned message.</returns>
-		public Message Clone()
+		public virtual Message Clone()
 		{
-			return new Message
+			// create a new instance of Message with the same properties.
+			var message = new Message
 			{
 				Id = this.Id,
 				User = this.User,
 				Content = this.Content,
-				Control = this.Control,
 				UserData = this.UserData,
 				Timestamp = this.Timestamp,
 				ContentType = this.ContentType
 			};
+
+			// request a new control (duplicate) for the message. Defaults to AutoSizeLabel.
+			// Handle ChatBox.RenderMessageControl to provide a custom control.
+			message.RequestControl();
+
+			return message;
 		}
 
 		#endregion

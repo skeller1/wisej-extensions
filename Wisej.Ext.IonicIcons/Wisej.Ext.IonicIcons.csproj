@@ -1,12 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFrameworks>net48;net7.0;net7.0-android;net7.0-ios;net7.0-windows10.0.19041.0</TargetFrameworks>
+    <TargetFrameworks>net48;net8.0</TargetFrameworks>
     <SignAssembly>true</SignAssembly>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AssemblyOriginatorKeyFile>extension.snk</AssemblyOriginatorKeyFile>
+    <FileVersion>3.5.14.1</FileVersion>
   </PropertyGroup>
-
   <ItemGroup>
     <None Remove="Resources\accessibility-outline.svg" />
     <None Remove="Resources\accessibility-sharp.svg" />
@@ -1341,7 +1340,6 @@
     <None Remove="Resources\woman-sharp.svg" />
     <None Remove="Resources\woman.svg" />
   </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Include="Resources\accessibility-outline.svg" />
     <EmbeddedResource Include="Resources\accessibility-sharp.svg" />
@@ -2676,9 +2674,7 @@
     <EmbeddedResource Include="Resources\woman-sharp.svg" />
     <EmbeddedResource Include="Resources\woman.svg" />
   </ItemGroup>
-
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="mkdir &quot;$(ProjectDir)..\bin&quot;&#xD;&#xA;xcopy &quot;$(TargetPath)&quot; &quot;$(ProjectDir)..\bin\$(TargetFramework)\&quot; /s /y /c&#xD;&#xA;" />
   </Target>
-
 </Project>

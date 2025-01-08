@@ -150,9 +150,9 @@ namespace Wisej.Web.Ext.FullCalendar
 		}
 
 		/// <summary>
-		/// Triggered when the a <see cref="FCResource"/> object changes.
+		/// Triggered when the a <see cref="SchedulerResource"/> object changes.
 		/// </summary>
-		[Description("Triggered when the a FCResource object changes.")]
+		[Description("Triggered when the a Resource object changes.")]
 		public event ResourceEventHandler ResourceChanged
 		{
 			add { base.Events.AddHandler(nameof(ResourceChanged), value); }
@@ -997,6 +997,25 @@ namespace Wisej.Web.Ext.FullCalendar
 		}
 		private bool _allDaySlot = true;
 
+		/// <summary>
+		/// Returns or sets a value indicating ToolTips are shown when the mouse pointer hovers over a <see cref="Wisej.Web.Ext.FullCalendar.Event" />.
+		/// </summary>
+		/// <returns>true if ToolTips are shown when the mouse pointer hovers over a <see cref="Wisej.Web.Ext.FullCalendar.Event" />; otherwise, false. The default is false.</returns>
+		/// <since>3.5.13</since>
+		[DefaultValue(false)]
+		public bool ShowEventToolTips
+		{
+			get { return this._showEventToolTips; }
+			set
+			{
+				if (this._showEventToolTips != value)
+				{
+					this._showEventToolTips = value;
+					Update();
+				}
+			}
+		}
+		private bool _showEventToolTips;
 
 		/// <summary>
 		/// Determines if timed events in agenda view should visually overlap.
@@ -1107,7 +1126,7 @@ namespace Wisej.Web.Ext.FullCalendar
 		/// </summary>
 		[DefaultValue(null)]
 		[Description("Returns or sets the scheduler resources.")]
-		public FCResource[] Resources
+		public SchedulerResource[] Resources
 		{
 			get { return this._resources; }
 			set
@@ -1136,7 +1155,7 @@ namespace Wisej.Web.Ext.FullCalendar
 				}
 			}
 		}
-		private FCResource[] _resources;
+		private SchedulerResource[] _resources;
 
 		/// <summary>
 		/// Returns or sets the text that will appear above the list of resources.
@@ -1286,7 +1305,7 @@ namespace Wisej.Web.Ext.FullCalendar
 			ClientRefetchEvents();
 		}
 
-		internal void OnResourceChanged(FCResource resource)
+		internal void OnResourceChanged(SchedulerResource resource)
 		{
 			OnResourceChanged(new ResourceEventArgs(resource));
 		}
@@ -1586,6 +1605,7 @@ namespace Wisej.Web.Ext.FullCalendar
 			options.themeSystem = TranslateThemeSystem(this.ThemeSystem);
 			options.businessHours = this.BusinessHours;
 			options.timeFormat = this.TimeFormat;
+			options.showEventToolTips = this.ShowEventToolTips;
 
 			if (this.ShouldSerializeSlotLabelFormat())
 				options.slotLabelFormat = this.SlotLabelFormat;

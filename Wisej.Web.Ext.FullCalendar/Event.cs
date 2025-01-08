@@ -131,6 +131,27 @@ namespace Wisej.Web.Ext.FullCalendar
 		}
 
 		/// <summary>
+		/// Returns or sets the text that appears when the mouse pointer hovers over an event.
+		/// </summary>
+		/// <returns>Gets the text that appears when the mouse pointer hovers over a <see cref="Wisej.Web.Ext.FullCalendar.Event" />.</returns>
+		/// <since>3.5.13</since>
+		[DefaultValue(null)]
+		[Localizable(false)]
+		public string ToolTipText
+		{
+			get { return this._tooltipText; }
+			set
+			{
+				if (this._tooltipText != value)
+				{
+					this._tooltipText = value;
+					OnEventChanged(this.Start, this.End);
+				}
+			}
+		}
+		private string _tooltipText;
+
+		/// <summary>
 		/// Returns or sets the unique ID for this event.
 		/// </summary>
 		public string Id
@@ -149,7 +170,7 @@ namespace Wisej.Web.Ext.FullCalendar
 		private string _id = null;
 
 		/// <summary>
-		/// Returns or sets the id of the <see cref="Resource"/> associated to this event.
+		/// Returns or sets the id of the <see cref="SchedulerResource"/> associated to this event.
 		/// </summary>
 		public string ResourceId
 		{

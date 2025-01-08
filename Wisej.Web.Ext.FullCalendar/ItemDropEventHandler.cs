@@ -44,7 +44,7 @@ namespace Wisej.Web.Ext.FullCalendar
 		/// <param name="item">The <see cref="T:Wisej.Web.Control"/> that is being dropped.</param>
 		/// <param name="day">The day/time that was clicked by the user.</param>
 		/// <param name="location">The location of a pointer click, in pixels.</param>
-		/// <param name="resourceId">ID of the <see cref="Resource"/> where the <paramref name="item"/> is being dropped on; or null.</param>
+		/// <param name="resourceId">ID of the <see cref="SchedulerResource"/> where the <paramref name="item"/> is being dropped on; or null.</param>
 		internal ItemDropEventArgs(Control item, DateTime day, Point location, string resourceId)
 			: base(day, MouseButtons.Left, location)
 		{
@@ -63,7 +63,7 @@ namespace Wisej.Web.Ext.FullCalendar
 		}
 
 		/// <summary>
-		/// Returns the id of the <see cref="Resource"/> where the <see cref="Item"/> is being dropped on.
+		/// Returns the id of the <see cref="SchedulerResource"/> where the <see cref="Item"/> is being dropped on.
 		/// </summary>
 		public string ResourceId
 		{

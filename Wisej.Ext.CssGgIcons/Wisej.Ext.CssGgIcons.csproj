@@ -1,12 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFrameworks>net48;net7.0;net7.0-android;net7.0-ios;net7.0-windows10.0.19041.0</TargetFrameworks>
+    <TargetFrameworks>net48;net8.0</TargetFrameworks>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>extension.snk</AssemblyOriginatorKeyFile>
+    <FileVersion>3.5.14.1</FileVersion>
   </PropertyGroup>
-
   <ItemGroup>
     <None Remove="Resources\abstract.svg" />
     <None Remove="Resources\add-r.svg" />
@@ -714,7 +713,6 @@
     <None Remove="Resources\zoom-in.svg" />
     <None Remove="Resources\zoom-out.svg" />
   </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Include="Resources\abstract.svg" />
     <EmbeddedResource Include="Resources\add-r.svg" />
@@ -1422,9 +1420,7 @@
     <EmbeddedResource Include="Resources\zoom-in.svg" />
     <EmbeddedResource Include="Resources\zoom-out.svg" />
   </ItemGroup>
-
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="mkdir &quot;$(ProjectDir)..\bin&quot;&#xD;&#xA;xcopy &quot;$(TargetPath)&quot; &quot;$(ProjectDir)..\bin\$(TargetFramework)\&quot; /s /y /c&#xD;&#xA;" />
   </Target>
-
 </Project>

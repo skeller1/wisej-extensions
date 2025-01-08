@@ -26,6 +26,7 @@ namespace Wisej.Web.Ext.ChatControl
 		{
 			InitializeComponent();
 
+			// Forward the TextBox tools to this Tools collection.
 			this.textBoxMessage.Tools.AddRange(this.Tools.ToArray());
 		}
 
@@ -34,13 +35,13 @@ namespace Wisej.Web.Ext.ChatControl
 		#region Events
 
 		/// <summary>
-		/// Fires before a user-typed message is sent.
+		/// Fires before a message is sent.
 		/// </summary>
 		[Description("Fires before a user-typed message is sent.")]
 		public event SendingMessageEventHandler SendingMessage;
 
 		/// <summary>
-		/// Fires after a user-typed message has been sent.
+		/// Fires after a message has been sent.
 		/// </summary>
 		[Description("Fires after a user-typed message has been sent.")]
 		public event MessageEventHandler SentMessage;
@@ -225,7 +226,7 @@ namespace Wisej.Web.Ext.ChatControl
 				}
 			}
 		}
-		private User _user = new User("1", "User", "resource.wx/Wisej.Web.Ext.ChatControl/Images/person-fill.svg");
+		private User _user = new User(Guid.NewGuid().ToString(), "User", "resource.wx/Wisej.Web.Ext.ChatControl/Images/person-fill.svg");
 
 		/// <summary>
 		/// Gets or sets whether the message avatar is visible.
@@ -375,8 +376,7 @@ namespace Wisej.Web.Ext.ChatControl
 		/// <summary>
 		/// Removes the control with the corresponding message.
 		/// </summary>
-		/// <param name="message"></param>
-		/// <returns></returns>
+		/// <param name="message">The message to remove.</param>
 		private void RemoveInternal(Message message)
 		{
 			var containers = this.flexLayoutPanelMessages.Controls;
@@ -388,18 +388,19 @@ namespace Wisej.Web.Ext.ChatControl
 		private void SendCurrentMessage()
 		{
 			var text = this.textBoxMessage.Text;
-
-			// post the message.
-			if (!string.IsNullOrEmpty(text))
+			if (!String.IsNullOrEmpty(text))
 			{
+				// clear text in textbox.
 				this.textBoxMessage.Clear();
 
+				// create a new message.
 				var message = new Message
 				{
 					User = this.User,
 					Content = text,
 				};
 
+				// add it to the datasource.
 				this.DataSource.Add(message);
 			}
 		}
@@ -412,15 +413,13 @@ namespace Wisej.Web.Ext.ChatControl
 		internal void AddInternal(Message message)
 		{
 			if (message == null)
-				throw new ArgumentNullException("Message cannot be null.");
+				throw new ArgumentNullException("message");
 
-			// if the message doesn't have a user, it belongs to the current user.
-			if (message.User == null)
-				message.User = this.User;
+			// if the message doesn't have a user, assign it to the current user.
+			message.User ??= this.User;
 
-			var timestamp = message.Timestamp;
-			if (timestamp == null)
-				message.Timestamp = DateTime.Now;
+			// if the message doesn't have a timestamp, set the timestamp to now.
+			message.Timestamp = message.Timestamp == null ? DateTime.Now : message.Timestamp;
 
 			var isChatBoxUser = this.User == message.User;
 
@@ -430,7 +429,7 @@ namespace Wisej.Web.Ext.ChatControl
 			message.RenderMessageControl += Message_RenderMessageControl;
 
 			// allow the container to cancel sending the message..
-			if (timestamp == null)
+			if (message.Timestamp == null)
 			{
 				var args = new SendingMessageEventArgs(isChatBoxUser, message);
 				SendingMessage?.Invoke(this, args);
@@ -462,7 +461,6 @@ namespace Wisej.Web.Ext.ChatControl
 		{
 			container.HorizontalAlign = alignment;
 			this.flexLayoutPanelMessages.Controls.Add(container);
-			Application.Post(() => this.flexLayoutPanelMessages.ScrollControlIntoView(container));
 		}
 
 		#endregion
@@ -471,14 +469,18 @@ namespace Wisej.Web.Ext.ChatControl
 
 		private void DataSource_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
+			this.SuspendLayout();
+
 			switch (e.Action)
 			{
 				case NotifyCollectionChangedAction.Add:
-					ProcessAdd(e.NewItems);
+					if (e.NewItems != null)
+						ProcessAdd(e.NewItems);
 					break;
 
 				case NotifyCollectionChangedAction.Remove:
-					ProcessRemove(e.OldItems);
+					if (e.OldItems != null)
+						ProcessRemove(e.OldItems);
 					break;
 
 				case NotifyCollectionChangedAction.Reset:
@@ -486,13 +488,16 @@ namespace Wisej.Web.Ext.ChatControl
 					break;
 
 				case NotifyCollectionChangedAction.Replace:
-					ProcessReplace(e.OldItems, e.NewItems);
+					if (e.OldItems != null && e.NewItems != null)
+						ProcessReplace(e.OldItems, e.NewItems);
 					break;
 
 				case NotifyCollectionChangedAction.Move:
 					ProcessMove(e.OldStartingIndex, e.NewStartingIndex);
 					break;
 			}
+
+			this.ResumeLayout();
 		}
 
 		private void ProcessAdd(IList newItems)
@@ -500,8 +505,9 @@ namespace Wisej.Web.Ext.ChatControl
 			foreach (Message message in newItems)
 				AddInternal(message);
 
+			// scroll the last message into view.
 			if (this.flexLayoutPanelMessages.Controls.Count > 0)
-				this.flexLayoutPanelMessages.ScrollControlIntoView(this.flexLayoutPanelMessages.Controls.First());
+				this.flexLayoutPanelMessages.ScrollControlIntoView(this.flexLayoutPanelMessages.Controls.LastOrDefault());
 		}
 
 		private void ProcessRemove(IList removedItems)

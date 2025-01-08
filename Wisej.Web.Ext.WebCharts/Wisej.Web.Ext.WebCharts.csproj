@@ -1,5 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net48</TargetFrameworks>
     <SignAssembly>true</SignAssembly>
@@ -7,16 +6,14 @@
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <AssemblyOriginatorKeyFile>extension.snk</AssemblyOriginatorKeyFile>
     <EmbeddedResourceUseDependentUponConvention>true</EmbeddedResourceUseDependentUponConvention>
+    <FileVersion>3.5.14.1</FileVersion>
   </PropertyGroup>
-
   <ItemGroup>
     <None Remove="Chart.bmp" />
   </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Include="Chart.bmp" />
   </ItemGroup>
-
   <ItemGroup>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
@@ -24,13 +21,10 @@
     <Reference Include="System.Windows.Forms.DataVisualization" />
     <PackageReference Include="Wisej-3" Version="3.5.*-*" />
   </ItemGroup>
-
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
-
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="mkdir &quot;$(ProjectDir)..\bin&quot;&#xD;&#xA;xcopy &quot;$(TargetPath)&quot; &quot;$(ProjectDir)..\bin\$(TargetFramework)\&quot; /s /y /c&#xD;&#xA;xcopy &quot;$(TargetDir)$(TargetName).xml&quot; &quot;$(ProjectDir)..\bin\$(TargetFramework)\&quot; /s /y /c&#xD;&#xA;" />
   </Target>
-
 </Project>

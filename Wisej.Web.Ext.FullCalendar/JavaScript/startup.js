@@ -32,6 +32,9 @@ this.init = function (options) {
 
 	if (!wisej.web.DesignMode) {
 
+		// initializes the tooltip system.
+		this.__initTooltipSystem(options);
+
 		// attach our event handler to fire the event back to the server.
 		options.events = this.loadEvents.bind(this);
 		options.dayClick = this.onDayClick.bind(this);
@@ -108,9 +111,9 @@ this.init = function (options) {
 /**
  * Release related objects.
  */
-this._onDestroyed = function()
-{
-	this._disposeObjects("__dataStore");
+this._onDestroyed = function () {
+
+	this._disposeObjects("__dataStore", "__hideTimer", "__showTimer");
 }
 
 /**
@@ -136,8 +139,7 @@ this.__patchHandlers = function () {
 this.exec = function () {
 
 	// defer if the calendar is not created yet.
-	if (!this.calendar)
-	{
+	if (!this.calendar) {
 		var args = arguments;
 		this.addListenerOnce("initialized", function (e) {
 			this.exec.apply(this, args);
@@ -156,8 +158,7 @@ this.exec = function () {
 			func.apply(this.calendar, Array.prototype.slice.call(arguments, 1));
 		}
 
-		if (this.__currentDate != this.calendar.getDate())
-		{
+		if (this.__currentDate != this.calendar.getDate()) {
 			this.__currentDate = this.calendar.getDate();
 			this.fireWidgetEvent("currentDateChanged", this.__currentDate.toDate());
 		}
@@ -287,7 +288,81 @@ this.onEventResize = function (event) {
 		end: end,
 		allDay: allDay
 	});
+}
 
+/**
+ * Initializes the tooltip system.
+ */
+this.__initTooltipSystem = function (options) {
+
+	if (options.showEventToolTips) {
+
+		// listen to mouse over and out to show/hide the tooltip.
+		options.eventMouseover = this.onEventMouseOver.bind(this);
+		options.eventMouseout = this.onEventMouseOut.bind(this);
+
+		// instantiate timers to manage the shared tooltip.
+		this.__showTimer = new qx.event.Timer();
+		this.__showTimer.addListener("interval", this.__onShowInterval, this);
+		this.__hideTimer = new qx.event.Timer();
+		this.__hideTimer.addListener("interval", this.__onHideInterval, this);
+
+		// retrieve the shared tooltip instance.
+		this.__tooltipManager = qx.ui.tooltip.Manager.getInstance();
+		this.__sharedTooltip = this.__tooltipManager.getSharedTooltip();
+	}
+}
+
+/**
+ * Handles the "eventMouseover" event.
+ */
+this.onEventMouseOver = function (event, ev) {
+
+	this.__tooltipEl = ev.target;
+
+	const text = event.toolTipText ?? event.title;
+	this.__sharedTooltip.set({
+		label: text,
+		opener: this
+	});
+
+	this.__tooltipManager.resetCurrent();
+
+	// we manage the tooltip outside of the default manager since
+	// in this case we don't have a widget for each entry in the calendar.
+	this.__showTimer.startWith(this.__sharedTooltip.getShowTimeout());
+}
+
+/**
+ * Handles the "eventMouseout" event.
+ */
+this.onEventMouseOut = function (event) {
+
+	this.__hideTimer.stop();
+	this.__showTimer.stop();
+	this.__tooltipEl = null;
+	this.__tooltipTarget = null;
+	this.__sharedTooltip.exclude();
+}
+
+this.__onShowInterval = function (e) {
+
+	if (!this.__tooltipEl)
+		return;
+
+	this.__showTimer.stop();
+	this.__hideTimer.stop();
+	this.__sharedTooltip.show();
+	this.__sharedTooltip.placeToElement(this.__tooltipEl, true);
+	this.__hideTimer.startWith(this.__sharedTooltip.getHideTimeout());
+}
+
+this.__onHideInterval = function (e) {
+
+	this.__hideTimer.stop();
+
+	if (!this.__tooltipManager.getCurrent())
+		this.__sharedTooltip.exclude();
 }
 
 // timer to detect single or double clicks.
